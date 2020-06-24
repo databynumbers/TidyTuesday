@@ -1,0 +1,69 @@
+---
+title: "TidyTuesday Caribou Location Tracking"
+output: html_document
+---
+
+ The original data can be accessed from [Movebank](https://www.datarepository.movebank.org/handle/10255/move.955) and information on Tudy Tuesday can be accessed from [GitHub](https://github.com/rfordatascience/tidytuesday)
+ 
+# Reading In The Data
+I begin by importing the two datasets:
+```{r}
+individuals <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-06-23/individuals.csv')
+locations <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-06-23/locations.csv')
+```
+ 
+It is pretty clear from first inspection that the individuals data set contains a lot of missing values in fact there are `{r} sum(is.na(individuals))` NA values. On the other hand the locations data set appears to be complete. 
+
+The packages used are :
+```{r}
+library(tidyverse)
+```
+
+
+# Data Analysis
+
+The missing values in this data set seem a bit tricky to deal with, in many cases such as with deploy on and off longitudes and latitudes don't appear to have been recorded, and there would not be a reasonable value to fill these with. The other four columns which have missing values appear to do so out of not being recorded again or not having been tested such as in the case of pregnant. In most cases I will ignore these columns or I may filter out some values in later analysis.
+
+## How many Males and Females are there?
+
+```{r}
+individuals %>% 
+  filter(sex == "m")
+```
+
+Interestingly out of the whole data set there are only four caribou that are males, although it seems that there may have beene an interest in females due to the `pregnant` variable (in this case this will obviously be FALSE). 
+
+## Is There A Difference In Locations During Different Seasons?
+
+```{r}
+locations %>% 
+  ggplot(locations, mapping = aes(longitude, latitude)) +
+  geom_point(mapping = aes(colour = season)) + 
+  labs(title = "Caribou Locations Based On Season") +
+  theme_classic()
+```
+
+This is quite an interesting plot however it may be more insightful to take a look at this information for different study_sites. First let's have a look at the distribution of locations purely based on sites.
+
+```{r}
+individual_locations <- left_join(locations,individuals)
+
+individual_locations %>% 
+  ggplot(individual_locations, mapping = aes(longitude, latitude)) +
+  geom_point(mapping = aes(colour = study_site)) + 
+  labs(title = "Caribou Locations Based On Study Site") +
+  theme_classic()
+```
+
+Now I want to combine this information such that we can if in a particular study site there is a difference in location based on season.
+
+```{r}
+individual_locations %>% 
+  ggplot(individual_locations, mapping = aes(longitude, latitude)) +
+  facet_wrap(~ study_site, nrow = 2) +
+  geom_point(mapping = aes(colour = season)) + 
+  theme_classic()
+```
+
+That gives us a better idea of this relationship. 
+
