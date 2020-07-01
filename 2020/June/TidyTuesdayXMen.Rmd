@@ -1,0 +1,68 @@
+---
+title: "TidyTuesdayXMen"
+output: html_document
+---
+
+# Loading Data
+
+First we want to load the data
+
+```{r}
+#Using library(tidytuesdayR)
+tuesdata <- tt_load("2020-06-30")
+character_visualisation <- tuesdata$character_visualization
+characters <- tuesdata$characters
+comic_bechdel <- tuesdata$comic_bechdel
+covers <- tuesdata$covers
+issue_collaborators <- tuesdata$issue_collaborators
+location <- tuesdata$locations
+xmen_bechdel <- tuesdata$xmen_bechdel
+```
+
+Packages used are:
+```{r}
+library(tidyverse)
+```
+
+# Data Visualisation
+
+We will focus on whether the Bechdel test was passed or not.
+
+```{r}
+ggplot(xmen_bechdel) +
+  geom_bar(mapping = aes(pass_bechdel), fill = "slateblue") +
+  labs(title = "Did it pass the Bechdel Test?") +
+  theme_classic()
+```
+
+Now let's have a look a Wolverine
+
+```{r}
+wolverine <- characters %>% 
+                filter(character == "Wolverine = Logan")
+wolverine_issues <- left_join(wolverine, xmen_bechdel)
+
+ggplot(wolverine_issues) +
+  geom_bar(mapping = aes(pass_bechdel), fill = "slateblue") +
+  labs(title = "Did it pass the Bechdel Test?") +
+  theme_classic()
+
+```
+
+Let's try to explore this relationship further
+
+Is there any relation to being captured
+```{r}
+ggplot(wolverine_issues, mapping = aes(captured, fill = pass_bechdel)) +
+  geom_bar()
+```
+
+what about eating food?
+
+```{r}
+ggplot(wolverine_issues, mapping = aes(depicted_eating_food, fill = pass_bechdel)) +
+  geom_bar() + 
+  labs(title = "Eating Food Passes the Bechdel Test?") +
+  theme_classic()
+```
+
