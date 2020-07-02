@@ -3,9 +3,12 @@ title: "TidyTuesdayXMen"
 output: html_document
 ---
 
+**Note:** data is sourced from [#TidyTuesday](https://github.com/rfordatascience/tidytuesday) and is originally from [Claremont Run](http://www.claremontrun.com/) with help from [Malcolm Barret](ahttps://twitter.com/malco_barrett) on [GitHub](https://github.com/malcolmbarrett/claremontrun).
+
+
 # Loading Data
 
-First we want to load the data
+First we want to load the data. 
 
 ```{r}
 #Using library(tidytuesdayR)
